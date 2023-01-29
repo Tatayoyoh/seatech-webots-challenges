@@ -1,0 +1,2 @@
+# PyJQ https://pypi.org/project/pyjq/
+pyjq==2.6.0
