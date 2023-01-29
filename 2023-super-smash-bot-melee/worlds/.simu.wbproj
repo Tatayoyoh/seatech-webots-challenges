@@ -7,3 +7,35 @@ centralWidgetVisible: 1
 orthographicViewHeight: 1
 textFiles: 0 "controllers/my_controller/my_controller.py"
 consoles: Console:All:All
+renderingDevicePerspectives: ClaireGyt:depth_camera;0;1;0;0
+renderingDevicePerspectives: ClaireGyt:rgb_camera;0;1;0;0
+renderingDevicePerspectives: IUT-Bares-Coline:depth_camera;0;1;0;0
+renderingDevicePerspectives: IUT-Bares-Coline:rgb_camera;0;1;0;0
+renderingDevicePerspectives: Jacint012:camera depth;1;1;0;0
+renderingDevicePerspectives: Jacint012:camera rgb;1;1;0;0
+renderingDevicePerspectives: Jacint012:depth_camera;0;1;0;0
+renderingDevicePerspectives: Jacint012:rgb_camera;0;1;0;0
+renderingDevicePerspectives: JustYo:depth_camera;0;1;0;0
+renderingDevicePerspectives: JustYo:rgb_camera;0;1;0;0
+renderingDevicePerspectives: LeGoazigoAntoine:depth_camera;0;1;0;0
+renderingDevicePerspectives: LeGoazigoAntoine:rgb_camera;0;1;0.284598;0.0574412
+renderingDevicePerspectives: Lucaslh83:depth_camera;0;1;0;0
+renderingDevicePerspectives: Lucaslh83:rgb_camera;0;1;0;0
+renderingDevicePerspectives: NathanLeMaguer:depth_camera;0;1;0;0
+renderingDevicePerspectives: NathanLeMaguer:rgb_camera;0;1;0;0
+renderingDevicePerspectives: RCLEMENT404:depth_camera;0;1;0;0
+renderingDevicePerspectives: RCLEMENT404:rgb_camera;0;1;0;0
+renderingDevicePerspectives: TeTan0s:depth_camera;0;1;0;0
+renderingDevicePerspectives: TeTan0s:rgb_camera;0;1;0;0
+renderingDevicePerspectives: UvQtcYZJuD7J5VW7:depth_camera;0;1;0;0
+renderingDevicePerspectives: UvQtcYZJuD7J5VW7:rgb_camera;0;1;0;0
+renderingDevicePerspectives: amortea1:camera depth;1;1;0;0
+renderingDevicePerspectives: amortea1:camera rgb;1;1;0;0
+renderingDevicePerspectives: amortea1:depth_camera;0;1;0.00390625;0.0104439
+renderingDevicePerspectives: amortea1:rgb_camera;0;1;0;0
+renderingDevicePerspectives: hmuseur:depth_camera;0;1;0;0
+renderingDevicePerspectives: hmuseur:rgb_camera;0;1;0;0
+renderingDevicePerspectives: mlola378:depth_camera;1;1;0;0
+renderingDevicePerspectives: mlola378:rgb_camera;1;1;0;0
+renderingDevicePerspectives: samuelGoupil:depth_camera;0;1;0;0
+renderingDevicePerspectives: samuelGoupil:rgb_camera;0;1;0;0

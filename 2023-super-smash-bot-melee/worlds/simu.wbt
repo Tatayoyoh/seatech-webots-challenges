@@ -23,6 +23,7 @@ IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R20
 IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023a/projects/objects/trees/protos/Cypress.proto"
 IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023a/projects/objects/bathroom/protos/WashingMachine.proto"
 IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023a/projects/humans/pedestrian/protos/Pedestrian.proto"
+IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023a/projects/robots/festo/robotino3/protos/Robotino3Platform.proto"
 
 WorldInfo {
 }
@@ -38,27 +39,27 @@ TexturedBackgroundLight {
 }
 RubberDuck {
   translation 3.7187597880271115 3.7339443125420853 2.1782917446159344
-  rotation 0.023978785573656767 0.006550801808129477 0.9996910046799877 0.7167513746312782
+  rotation 0.023978785573656736 0.006550801808129463 0.9996910046799877 0.7167513746312782
   name "duck1"
   scale 7
 }
 RubberDuck {
   translation -3.7373075183923046 -3.6948164684926006 2.1782889746069927
-  rotation 0.005120888183976706 -0.008323566833155055 0.9999522462294792 -2.216588223538758
+  rotation 0.005120888183976705 -0.00832356683315508 0.9999522462294792 -2.216588223538758
   name "duck3"
   scale 7
   bodyColor 0.878431 0.105882 0.141176
 }
 RubberDuck {
   translation -3.726099043837146 3.7440126176532935 2.1804410647887416
-  rotation 0.00650773216590164 -0.0019532498839378142 0.9999769168520579 2.402746011400873
+  rotation 0.006507732165901637 -0.0019532498839378142 0.9999769168520579 2.402746011400873
   name "duck4"
   scale 7
   bodyColor 0.878431 0.105882 0.141176
 }
 RubberDuck {
   translation 3.7300196468788753 -3.6961953473091897 2.178287632965254
-  rotation 0.020259601731075244 -0.01075506654517849 -0.9997369039308829 0.7832077522808241
+  rotation 0.020259601731075227 -0.01075506654517847 -0.9997369039308829 0.7832077522808241
   name "duck2"
   scale 7
   bodyColor 0.180392 0.760784 0.494118
