@@ -2,7 +2,7 @@ from os.path import abspath, dirname, join, exists
 from os import listdir, walk
 from pprint import pprint
 import random, math
-from controller import Supervisor, Node, Robot
+from controller import Supervisor
 from webots_parser import WebotsParser
 import pyjq
 
@@ -34,6 +34,7 @@ class Challenger():
     controller = ''
     world = None
     robot_settings = []
+    simu_DEF = None
 
     def __init__(self, name, src_path):
         self.name = name
@@ -83,15 +84,22 @@ class SeatechBattleSupervisor(Supervisor):
         return None
 
     def __fetch_challengers_robots(self):
+        self.__challengers = []
+        self.__unsuported_challengers = []
+
         # fetch folder
         for challenger_name in listdir(self.__challengers_folder):
-            challenger = Challenger(name=challenger_name, src_path=join(self.__challengers_folder))
+            challenger = Challenger(
+                name=challenger_name, 
+                src_path=join(self.__challengers_folder, challenger_name)
+            )
             for root, dirs, files in walk(challenger.src_path):
                 if 'worlds' in dirs and 'controllers' in dirs:
                     controller_name = '%s_%s'%(GENERIC_CONTROLLER_NAME, challenger.name)
                     controller_path = join(self.__controllers_folder, controller_name)
                     challenger_world_file = join(root, 'worlds', 'simu.wbt')
                     if exists(controller_path) and exists(challenger_world_file):
+                        # parse Webots PROTO file
                         proto = WebotsParser(verbose=False)
                         proto.load(challenger_world_file)
                         # get robot controller name
@@ -106,50 +114,43 @@ class SeatechBattleSupervisor(Supervisor):
                             proto.write_content = ''
                             proto._write_field(slot)
                             challenger.robot_settings.append(proto.write_content.replace('\n', ''))
-                        self.__challengers.append(challenger)
-                    else:
-                        self.__unsuported_challengers.append(challenger)
-                    break
+                        break
 
-    def __pop_robot(self, challenger:Challenger):
-        x = random.uniform(-ARENA_SIDE_SIZE, ARENA_SIDE_SIZE)
-        y = random.uniform(-ARENA_SIDE_SIZE, ARENA_SIDE_SIZE)
-        rotation = random.uniform(-math.pi, math.pi)
-
-        print(controller)
-        print(x, y, rotation)
-
-        if challenger.controller:
-            controller = ', controller "%s"'%(controller)
-        
-        node_name = challenger.name
-
-        # With 'DEF' we can set Node definition
-        robot_def = 'DEF %s SummitXlSteel { \
-            translation %s %s 2.1, \
-            rotation 0 0 1 %s, \
-            name "%s"' \
-            %(node_name, challenger.robot, x, y, rotation, challenger.name, controller)
-        
-        self.__root_children.importMFNodeFromString(-1, robot_def)
-
-        self.__robots[node_name] = self.getFromDef(node_name)
+            if challenger.robot:
+                self.__challengers.append(challenger)
+            else:
+                self.__unsuported_challengers.append(challenger)
 
     def clear(self):
-        for robot in self.__robots.values():
-            robot.remove()
-            del robot
-        self.__robots.clear()
+        for challenger in self.challengers:
+            challenger.simu_DEF.remove()
+            challenger.simu_DEF = None
 
-        for token in self.__tokens.values():
-            token.remove()
-            del token
-        self.__tokens.clear()
+        self.__challengers = []
+        self.__unsuported_challengers = []   
 
         self.__running = False
 
                 
     def pop_challengers(self):
         self.__running = True
-        for challenger in self.__challengers:
-            self.__pop_robot(challenger)
+        for i, challenger in enumerate(self.__challengers):
+            x = random.uniform(-ARENA_SIDE_SIZE, ARENA_SIDE_SIZE)
+            y = random.uniform(-ARENA_SIDE_SIZE, ARENA_SIDE_SIZE)
+            rotation = random.uniform(-math.pi, math.pi)
+            # TODO : not twice same place
+
+            if challenger.controller:
+                controller = ', controller "%s"'%(challenger.controller)
+            
+            node_name = challenger.name
+
+            # With 'DEF' we can set Node definition
+            robot_def = 'DEF %s %s { \
+                translation %s %s 2.1, \
+                rotation 0 0 1 %s, \
+                name "%s" %s }' \
+                %(node_name, challenger.robot, x, y, rotation, challenger.name, controller)
+            
+            self.__root_children.importMFNodeFromString(-1, robot_def)
+            self.challengers[i].simu_DEF = self.getFromDef(node_name)

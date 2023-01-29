@@ -6,7 +6,7 @@ if __name__ == '__main__':
 
     supervisor = SeatechBattleSupervisor()
     time_step = int(supervisor.getBasicTimeStep())
-    # supervisor.pop_challengers()
+    supervisor.pop_challengers()
 
     keyboard = Keyboard(time_step)
     # keyboard.enable(KEYBOARD_SAMPLING_PERIOD)
@@ -28,7 +28,7 @@ if __name__ == '__main__':
         key = chr(key).upper() if key != -1 else None
         if key == 'R':
             supervisor.clear()
-            print('Removed all challengers !')
+            supervisor.pop_challengers()
         elif key == 'Q':
             break
 
