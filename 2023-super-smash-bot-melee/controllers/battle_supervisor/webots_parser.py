@@ -53,7 +53,9 @@ class WebotsParser:
                 line = self._prepare_line(line)
                 self.line_count += 1
                 if line:
-                    if line.startswith('PROTO'):
+                    if line.startswith('EXTERNPROTO'):
+                        continue
+                    elif line.startswith('PROTO'):
                         self.content['root'].append(self._read_node_declaration(line))
                     else:
                         self.content['root'].append(self._read_node(line))
