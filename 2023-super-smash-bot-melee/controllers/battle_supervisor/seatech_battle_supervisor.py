@@ -14,31 +14,30 @@ ROBOT_LIST = [
     'SickS300',
     'TurtleBot3Burger',
     'RobotisLds01',
-    'Astra',
     'Rosbot',
     'E-puck',
     'HokuyoUrg04lxug01',
     'SummitXlSteel',
     'Tiago++',
     'Robotino3',
+    'Robotino3Platform',
 ]
 
 ARENA_SIDE_SIZE = 3
 
-SLOT_QUERY = '.root[0].fields[] | select(.name == $robotname).value.fields[] | select(.name | test(".*slot";"i"))'
+# SLOT_QUERY = '.root[0].fields[] | select(.name == $robotname).value.fields[] | select(.name | test(".*slot";"i"))'
+SLOT_QUERY = '.root[].fields[] | select(.name | test(".*slot";"i"))'
 
 class Challenger():
-    name = None
-    src_path = None
-    robot = ''
-    controller = ''
-    world = None
-    robot_settings = []
-    simu_DEF = None
 
     def __init__(self, name, src_path):
         self.name = name
         self.src_path = src_path
+        self.robot = ''
+        self.controller = ''
+        self.world = None
+        self.robot_settings = []
+        self.simu_DEF = None
 
     def __repr__(self) -> str:
         return '%s (%s): %s %s [%s]'%(self.name, self.src_path, self.robot, self.controller, self.robot_settings)
@@ -57,8 +56,6 @@ class SeatechBattleSupervisor(Supervisor):
         self.__challengers = []
         self.__unsuported_challengers = []
         self.__running = False
-
-        self.__root_children = self.getRoot().getField('children')
 
         self.__fetch_challengers_robots()
 
@@ -110,14 +107,16 @@ class SeatechBattleSupervisor(Supervisor):
                         # get robot Name
                         challenger.robot = self.__get_used_robot(str(proto.content))
                         # get robot Slots
-                        robot_slots = pyjq.all(SLOT_QUERY, proto.content, vars={'robotname':challenger.robot})
+                        robot_slots = pyjq.all(SLOT_QUERY, proto.content)
+
                         for slot in robot_slots:
                             proto.write_content = ''
                             proto._write_field(slot)
                             challenger.robot_settings.append(proto.write_content.replace('\n', ''))
+
                         break
 
-            if challenger.robot:
+            if challenger.robot and challenger.controller:
                 self.__challengers.append(challenger)
             else:
                 self.__unsuported_challengers.append(challenger)
@@ -141,17 +140,21 @@ class SeatechBattleSupervisor(Supervisor):
             rotation = random.uniform(-math.pi, math.pi)
             # TODO : not twice same place
 
-            if challenger.controller:
-                controller = ', controller "%s"'%(challenger.controller)
+            controller = ', controller "%s"'%(challenger.controller)
             
+            settings = ''
+            if challenger.robot_settings:
+                for s in challenger.robot_settings:
+                    settings += ',' + s
+
             node_name = challenger.name
 
             # With 'DEF' we can set Node definition
             robot_def = 'DEF %s %s { \
                 translation %s %s 2.1, \
                 rotation 0 0 1 %s, \
-                name "%s" %s }' \
-                %(node_name, challenger.robot, x, y, rotation, challenger.name, controller)
-            
-            self.__root_children.importMFNodeFromString(-1, robot_def)
+                name "%s" %s %s }' \
+                %(node_name, challenger.robot, x, y, rotation, challenger.name, controller, settings)
+
+            self.getRoot().getField('children').importMFNodeFromString(-1, robot_def)
             self.challengers[i].simu_DEF = self.getFromDef(node_name)

@@ -21,7 +21,7 @@ cd seatech-python-object-and-robotic-exo/02-webots
 ## Règles de structuration
 
 * le controller Webtos doit impérativement avoir le nom `my_controller`
-* le dépôt Github doit contenut un UNIQUE projet webots (controllers, worlds, protos, ...) 
+* le dépôt Github doit contenir un UNIQUE projet webots (controllers, worlds, protos, ...)
 
 
 ## Utilisation du superviseur

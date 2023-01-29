@@ -9,7 +9,6 @@ if __name__ == '__main__':
     supervisor.pop_challengers()
 
     keyboard = Keyboard(time_step)
-    # keyboard.enable(KEYBOARD_SAMPLING_PERIOD)
     print('Student folder:', supervisor.challengers_folder)
 
     print('CHALLENGERS:')
@@ -29,6 +28,7 @@ if __name__ == '__main__':
         if key == 'R':
             supervisor.clear()
             supervisor.pop_challengers()
+            print('reseted')
         elif key == 'Q':
             break
 
