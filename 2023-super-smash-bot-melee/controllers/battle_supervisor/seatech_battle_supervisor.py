@@ -48,8 +48,9 @@ class Challenger():
 
 
 class SeatechBattleSupervisor(Supervisor):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, test_mode=False):
+        if not test_mode:
+            super().__init__()
         # 'challengers' folder is created by 'fetch_challengers_repositories.py' script
         self.__controllers_folder = abspath(join(dirname(abspath(__name__)), '..'))
         self.__challengers_folder = abspath(join(dirname(abspath(__name__)), '../../challengers'))
