@@ -21,6 +21,12 @@ ROBOT_LIST = [
     'Tiago++',
     'Robotino3',
     'Robotino3Platform',
+    'Pioneer3at',
+    'Koala',
+    'Create',
+    'Pr2',
+    'Thymio2',
+    'Khepera3'
 ]
 
 ARENA_SIDE_SIZE = 3
@@ -98,8 +104,13 @@ class SeatechBattleSupervisor(Supervisor):
                     challenger_world_file = join(root, 'worlds', 'simu.wbt')
                     if exists(controller_path) and exists(challenger_world_file):
                         # parse Webots PROTO file
-                        proto = WebotsParser(verbose=False)
-                        proto.load(challenger_world_file)
+                        try:
+                            proto = WebotsParser(verbose=False)
+                            proto.load(challenger_world_file)
+                        except Exception as e:
+                            print('ERROR', str(challenger))
+                            print(e)
+                            break
                         # get robot controller name
                         challenger.controller = controller_name
                         # get robot World
