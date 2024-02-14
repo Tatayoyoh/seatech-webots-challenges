@@ -39,14 +39,5 @@ if __name__ == '__main__':
             chdir(username)
             system('git pull')
 
-        for root, dirs, files in walk("."):
-            if GENERIC_CONTROLLER_NAME in dirs:
-                new_controller_name = '%s_%s'%(GENERIC_CONTROLLER_NAME, username)
-                dest = join(CURRENT_FOLDER, 'controllers', new_controller_name)
-                if exists(dest):
-                    rmtree(dest)
-                copytree(join(root, GENERIC_CONTROLLER_NAME), dest)
-                rename(join(dest, 'my_controller.py'), join(dest, new_controller_name+'.py'))
-                print('OK copied')
 
     chdir(CURRENT_FOLDER)
