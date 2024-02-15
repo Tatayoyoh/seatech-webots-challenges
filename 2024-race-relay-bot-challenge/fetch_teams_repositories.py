@@ -14,7 +14,6 @@ PICK_AMOUNT = 3
 CURRENT_FOLDER = dirname(__file__)
 REPO_LIST_FILE = join(CURRENT_FOLDER, 'repo-list')
 REPO_FOLDER = join(CURRENT_FOLDER, 'teams')
-GENERIC_CONTROLLER_NAME = 'my_controller'
 
 if __name__ == '__main__':
     with open(REPO_LIST_FILE, 'r') as f:
@@ -29,14 +28,17 @@ if __name__ == '__main__':
         mkdir(REPO_FOLDER)
 
     for repo in repos:
+        if not repo.strip(): # blank line
+            continue
+        
         chdir(REPO_FOLDER)
-        username = repo.split('/')[3]
-        print('CHECK', username)
-        if not exists(username):
-            system('git clone %s %s'%(repo, username))
-            chdir(username)
+        team_name = repo.split(' ')[1]
+        print('CHECK', team_name)
+        if not exists(team_name):
+            system('git clone %s'%(repo))
+            chdir(team_name)
         else:
-            chdir(username)
+            chdir(team_name)
             system('git pull')
 
 

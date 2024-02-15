@@ -2,3 +2,4 @@ repo
 repos
 my_controller_*
 *.pyc
+teams*

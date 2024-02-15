@@ -5,7 +5,6 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/project
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/floors/protos/RectangleArena.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/appearances/protos/Parquetry.proto"
 EXTERNPROTO "../protos/RoadLine.proto"
-EXTERNPROTO "../protos/SolidRoundedBox.proto"
 EXTERNPROTO "../protos/SolidPipe1.proto"
 EXTERNPROTO "../protos/SolidPipe2.proto"
 EXTERNPROTO "../protos/SolidPipe3.proto"
@@ -18,7 +17,7 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/project
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/traffic/protos/TrafficCone.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/traffic/protos/HighwayPole.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/traffic/protos/HighwaySign.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/road/protos/RoadPillars.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/solids/protos/SolidBox.proto"
 IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/rec/fabtino/protos/Fabtino.proto"
 IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/devices/sick/protos/SickS300.proto"
 IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/robotis/turtlebot/protos/TurtleBot3Burger.proto"
@@ -37,13 +36,19 @@ IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R20
 IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/mobsya/thymio/protos/Thymio2.proto"
 IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/k-team/khepera3/protos/Khepera3.proto"
 IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/devices/slamtec/protos/RpLidarA2.proto"
+IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/dji/mavic/protos/Mavic2Pro.proto"
+IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/bitcraze/crazyflie/protos/Crazyflie.proto"
+IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/adept/pioneer3/protos/Pioneer3dx.proto"
+IMPORTABLE EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/clearpath/moose/protos/Moose.proto"
 
 WorldInfo {
   basicTimeStep 20
+  defaultDamping Damping {
+  }
 }
 Viewpoint {
-  orientation -0.16864890364588697 0.06796148773394411 0.9833304548746719 2.362679169893373
-  position 44.68172510304538 -40.559513418242034 25.891694300704227
+  orientation -0.139739818733852 0.04774812068771015 0.9890363491960356 2.460394317944917
+  position 45.835212523599914 -33.94506931128252 20.039972779525815
 }
 TexturedBackgroundLight {
 }
@@ -166,68 +171,68 @@ SolidPipe4 {
     metalness 0
   }
 }
-SolidRoundedBox {
+SolidBox {
   translation -14.8371 31.6911 2
   size 5 10 5
 }
-SolidRoundedBox {
+SolidBox {
   translation -34.8845 49.2527 2
   name "rounded box(8)"
   size 5 10 5
 }
-SolidRoundedBox {
+SolidBox {
   translation -42.0283 31.498 2
   rotation 0 0 1 1.56425
   name "rounded box(7)"
   size 5 10 5
 }
-SolidRoundedBox {
+SolidBox {
   translation -21.8989 46.2055 1
   rotation 0 0 -1 0.935933
   name "rounded box(6)"
   size 2 8 2
 }
-SolidRoundedBox {
+SolidBox {
   translation -31.6855 27.8511 1
   rotation 0 0 -1 0.00654517
   name "rounded box(9)"
   size 2 10 2
 }
-SolidRoundedBox {
+SolidBox {
   translation -25.3049 38.1055 1
   rotation 0 0 -1 0.00654517
   name "rounded box(10)"
   size 2 10 2
 }
-SolidRoundedBox {
+SolidBox {
   translation -36.8578 34.4436 1
   name "rounded box(2)"
 }
-SolidRoundedBox {
-  translation -33.087 38.1929 1
+SolidBox {
+  translation -32.239 38.6817 1
   name "rounded box(3)"
 }
-SolidRoundedBox {
-  translation -30.8325 38.5037 1
+SolidBox {
+  translation -30.3282 38.7538 1
   name "rounded box(13)"
 }
-SolidRoundedBox {
-  translation -27.3083 32.8202 1
+SolidBox {
+  translation -26.9499 34.0866 1
   name "rounded box(4)"
 }
-SolidRoundedBox {
+SolidBox {
   translation -23.1975 23.782 1
   name "rounded box(12)"
 }
-SolidRoundedBox {
-  translation -29.4659 32.0037 1
+SolidBox {
+  translation -29.7066 31.9385 1
   name "rounded box(11)"
 }
-SolidRoundedBox {
-  translation -34.8504 36.1671 1
+SolidBox {
+  translation -33.7563 38.7037 1
   name "rounded box(5)"
 }
-SolidRoundedBox {
+SolidBox {
   translation -20.0214 34.6029 1
   name "rounded box(1)"
 }
@@ -269,15 +274,13 @@ Road {
   leftBorderBoundingObject TRUE
 }
 RubberDuck {
-  hidden linearVelocity_0 0.003361459044483847 -0.0034701548490382273 0.0007347593144009888
-  hidden angularVelocity_0 0.011510751355271244 0.011150199594119548 -1.2324236088684394e-11
-  translation -43.704597175200405 31.577247580501414 4.71491436723274
-  rotation 0.0007526043745960315 0.0017768370728722448 -0.9999981382166028 0.8013088043260654
+  translation -43.7049862546658 31.57764924455016 4.714920906569305
+  rotation -0.0002716211718419206 -0.0006412752453910141 -0.9999997574939699 0.8013076392340927
   scale 14
 }
 RubberDuck {
-  translation 6.761839173700133 -9.708543554539244 0.44271073731521793
-  rotation -0.00019387376830402227 -2.2973869578122066e-05 0.9999999809425815 -2.905693622469094
+  translation 6.761864284266234 -9.708537732117271 0.44271073725594706
+  rotation -0.00019387379829042764 -2.2973951658018853e-05 0.9999999809425737 -2.905693879166811
   name "rubber duck(1)"
   scale 30
 }
@@ -291,15 +294,8 @@ TrafficCone {
   name "traffic cone(1)"
 }
 RubberDuck {
-  hidden linearVelocity_0 0.02098173943210085 0.020315456509627714 -0.0010346150218253141
-  hidden angularVelocity_0 -0.06470168375905527 0.06679670795875164 1.4762365443873366e-05
-  translation -15.025171654771302 33.04800688748941 4.730568576096409
-  rotation -0.0003070808275802952 0.0007635672208920141 0.999999661333175 0.7693511186174965
+  translation -14.994859045040307 33.077267360832884 4.730577578992764
+  rotation -0.00014985373490644237 0.0003751468558308056 0.999999918404344 0.7701516868572387
   name "rubber duck(2)"
   scale 18
-}
-RoadPillars {
-  translation -73.9608 75.7566 -1.5
-  rotation 0 0 1 -1.5707953071795862
-  height 6
 }

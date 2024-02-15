@@ -9,29 +9,10 @@ import pyjq
 import shutil
 import os
 import pathlib
+from pprint import pprint
 
 # SLOT_QUERY = '.root[0].fields[] | select(.name == $robotname).value.fields[] | select(.name | test(".*slot";"i"))'
-SLOT_QUERY = '.root[].fields[] | select(.name | test(".*slot";"i"))'
 
-ROBOT_LIST = [
-    'Fabtino',
-    'SickS300',
-    'TurtleBot3Burger',
-    'RobotisLds01',
-    'Rosbot',
-    'E-puck',
-    'HokuyoUrg04lxug01',
-    'SummitXlSteel',
-    'Tiago++',
-    'Robotino3',
-    'Robotino3Platform',
-    'Pioneer3at',
-    'Koala',
-    'Create',
-    'Pr2',
-    'Thymio2',
-    'Khepera3'
-]
 
 class Team():
     def __init__(self, name, repo_path):
@@ -131,7 +112,11 @@ class SeatechRaceSupervisor(Supervisor):
                 print(root, dirs)
                 challenger_world_file = join(
                     root, 'worlds', '2024-simu_project.wbt')
-                for controller_name in listdir(join(root, 'controllers')):
+                    
+                controllers = list(listdir(join(root, 'controllers')))
+                controllers.sort()
+                for controller_name in controllers:
+                    print(controller_name)
                     controller_path = join(
                         root, 'controllers', controller_name)
 
@@ -157,12 +142,17 @@ class SeatechRaceSupervisor(Supervisor):
                         except Exception as e:
                             print('ERROR', str(challenger))
                             print(e)
-                            break
+                            continue
+
+                        CONTROLLER_QUERY = '.root[] | select(.fields[].value == "%s")'%(controller_name)
+                        ROBOT_NAME_QUERY = '.root[] | select(.fields[].value == "%s") | .name'%(controller_name)
+                        SLOT_QUERY = '.root[].fields[] | select(.name | test(".*slot";"i"))'
+                        robot_controller_dict = pyjq.all(CONTROLLER_QUERY, proto.content)
 
                         # get robot World
                         challenger.world = challenger_world_file
                         # get robot Name
-                        challenger.robot = self.__get_used_robot(str(proto.content))
+                        challenger.robot = pyjq.first(ROBOT_NAME_QUERY, proto.content)
                         # get robot Slots
                         robot_slots = pyjq.all(SLOT_QUERY, proto.content)
 
@@ -173,10 +163,12 @@ class SeatechRaceSupervisor(Supervisor):
                                 proto_content = proto.file.read()
                                 challenger.robot_settings.append(proto_content.replace('\n', ''))
 
-        if challenger.robot and challenger.controller:
-            self.__selected_team.challengers.append(challenger)
-        else:
-            self.__selected_team.unsuported_challengers.append(challenger)
+                        if challenger.robot and challenger.controller:
+                            self.__selected_team.challengers.append(challenger)
+                        else:
+                            self.__selected_team.unsuported_challengers.append(challenger)
+            else:
+                break
 
         print('IMPORTED', len(self.__selected_team.challengers))
         print('IGNORED', self.__selected_team.unsuported_challengers)
@@ -208,14 +200,17 @@ class SeatechRaceSupervisor(Supervisor):
         if number == 0:
             x = -15
             y = -15.5
+            z = 0.1
             rotation = 0
         elif number == 1:
             x = -16
             y = 23
+            z = 0.03
             rotation = 2.354
         elif number == 2:
             x = -47
             y = 57
+            z = 0.1
             rotation = 1.552
         else:
             return
@@ -234,17 +229,19 @@ class SeatechRaceSupervisor(Supervisor):
 
         # With 'DEF' we can set Node definition
         robot_def = 'DEF %s %s { \
-            translation %s %s 2.1, \
+            translation %s %s %s, \
             rotation 0 0 1 %s, \
             name "%s" %s %s }' \
-            % (node_name, challenger.robot, x, y, rotation, challenger.name, controller, settings)
+            % (node_name, challenger.robot, x, y, z, rotation, challenger.name, controller, settings)
 
-        from pprint import pprint
-        pprint(robot_def)
 
         self.getRoot().getField('children').importMFNodeFromString(-1, robot_def)
         self.__selected_team.challengers[number].simu_DEF = self.getFromDef(
             node_name)
         
+        print('SELECTED %s:'%(number))
+        pprint(self.__selected_team.challengers[number])
+        # print(robot_def)
+
         return self.__selected_team.challengers[number].simu_DEF
 

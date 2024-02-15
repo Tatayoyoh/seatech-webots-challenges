@@ -36,23 +36,19 @@ if __name__ == '__main__':
                 challenger2 = supervisor.pop_challenger(1)
         elif challenger2:
             ch2_pos = challenger2.getPosition()
-            if ch2_pos[0] > -46 and ch2_pos[0] < -40 and ch2_pos[1] > 53 and ch2_pos[1] < 48:
+            if ch2_pos[0] > -46 and ch2_pos[0] < -40 and ch2_pos[1] > 48 and ch2_pos[1] < 53:
                 challenger2.remove()
                 challenger2 = None
                 challenger3 = supervisor.pop_challenger(2)
 
         if key == 'Q':
             break
-        # elif key == 'R':
-        #     supervisor.clear()
-        #     supervisor.pop_challenger(1)
-        #     print('>>> SIMU RESETED')
-
-
-    # if supervisor.unsuported_challengers:
-    #     print('UNSUPORTED CHALLENGERS:')
-    #     for c in supervisor.unsuported_challengers:
-    #         print(c.name, c.robot)
+        elif key == 'R':
+            supervisor.clear()
+            challenger1 = supervisor.pop_challenger(0)
+            challenger2 = None
+            challenger3 = None
+            print('>>> SIMU RESETED')
 
 
 
