@@ -4,7 +4,7 @@ from pprint import pprint
 from os.path import abspath, dirname, join, exists
 from os import listdir, walk
 from seatech_battle_supervisor import ROBOT_LIST, SLOT_QUERY, GENERIC_CONTROLLER_NAME
-from seatech_battle_supervisor import Challenger, SeatechBattleSupervisor
+from seatech_battle_supervisor import Challenger, SeatechBattleSupervisor, jq
 
 files = [
     '/home/bob/Projects/seatech/seatech-webots-challenges/2023-super-smash-bot-melee/challengers/RCLEMENT404/webot/worlds/simu.wbt',
@@ -35,7 +35,7 @@ SLOT_QUERY = '.root[].fields[] | select(.name | test(".*slot";"i"))'
 
 #     print(challenger_robot)
 
-#     robot_slots = pyjq.all(SLOT_QUERY, proto.content)
+#     robot_slots = jq(SLOT_QUERY, proto.content)
 
 #     # pprint(robot_slots)
 

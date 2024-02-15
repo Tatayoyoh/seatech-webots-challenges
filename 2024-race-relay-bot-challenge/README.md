@@ -23,8 +23,15 @@ Les terrains sont décomposés en trois types :
 ## Récupérer les projet
 
 Le script suivant récupère les dépôts présents dans le fichier `repo-list`
-```
+```bash
 python3 fetch_teams_repositories.py
+```
+
+## Configurer son Linux
+
+L'utilitaire [`jq`](https://jqlang.github.io/jq/) est nécessaire pour exécuter le superviseur de simulation.
+```bash
+sudo apt install jq
 ```
 
 ## Lancer la simulation
@@ -34,7 +41,7 @@ Ouvrir `webots` (version 2023b), et ouvrir le monde présent dans `2024-race-rel
 Démarer la simulation avec le bouton 'play'
 
 Lancer ensuite le script du superviseur pour démarrer la simulation d'un équipe :
-```
+```bash
 cd controllers/race_supervisor/
 python3 race_supervisor.py
 ```

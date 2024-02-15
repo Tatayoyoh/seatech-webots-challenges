@@ -4,7 +4,8 @@ from pprint import pprint
 import random, math
 from controller import Supervisor
 from webots_parser import WebotsParser
-import pyjq
+import os
+import json
 
 GENERIC_CONTROLLER_NAME = 'my_controller'
 BATTLE_ROBOTS_NUMBER = 20
@@ -33,6 +34,19 @@ ARENA_SIDE_SIZE = 3
 
 # SLOT_QUERY = '.root[0].fields[] | select(.name == $robotname).value.fields[] | select(.name | test(".*slot";"i"))'
 SLOT_QUERY = '.root[].fields[] | select(.name | test(".*slot";"i"))'
+
+def jq(jq_expression, data, as_list=False):
+    """ call jq command """
+    cmd = "echo '%s' | jq '%s'"%(json.dumps(data), jq_expression)
+    res = os.popen(cmd).read()
+    if res:
+        res = json.loads(res)
+        if as_list and type(res) != list:
+            res = [res]
+    else:
+        if as_list:
+            res = []
+    return res
 
 class Challenger():
 
@@ -118,7 +132,7 @@ class SeatechBattleSupervisor(Supervisor):
                         # get robot Name
                         challenger.robot = self.__get_used_robot(str(proto.content))
                         # get robot Slots
-                        robot_slots = pyjq.all(SLOT_QUERY, proto.content)
+                        robot_slots = jq(SLOT_QUERY, proto.content)
 
                         for slot in robot_slots:
                             proto.write_content = ''

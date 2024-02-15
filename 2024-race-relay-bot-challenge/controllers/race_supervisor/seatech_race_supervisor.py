@@ -3,13 +3,26 @@ from os import listdir, walk
 from pprint import pprint
 from controller import Supervisor
 from webots_parser import WebotsParser
-import pyjq
 import shutil
 import pathlib
 from pprint import pprint
+import os
+import json
 
 # SLOT_QUERY = '.root[0].fields[] | select(.name == $robotname).value.fields[] | select(.name | test(".*slot";"i"))'
 
+def jq(jq_expression, data, as_list=False):
+    """ call jq command """
+    cmd = "echo '%s' | jq '%s'"%(json.dumps(data), jq_expression)
+    res = os.popen(cmd).read()
+    if res:
+        res = json.loads(res)
+        if as_list and type(res) != list:
+            res = [res]
+    else:
+        if as_list:
+            res = []
+    return res
 
 class Team():
     def __init__(self, name, repo_path):
@@ -24,7 +37,6 @@ class Team():
 
     def __str__(self) -> str:
         return self.__repr__()
-
 
 class Challenger():
 
@@ -59,7 +71,6 @@ class Challenger():
 
     def __str__(self) -> str:
         return self.__repr__()
-
 
 class SeatechRaceSupervisor(Supervisor):
     def __init__(self, test_mode=False):
@@ -131,6 +142,7 @@ class SeatechRaceSupervisor(Supervisor):
         controllers = list(listdir(join(team.repo_path, 'controllers')))
         controllers.sort()
         for controller_name in controllers:
+            print('-----------------')
             print(controller_name)
             controller_path = join(team.repo_path, 'controllers', controller_name)
 
@@ -164,13 +176,16 @@ class SeatechRaceSupervisor(Supervisor):
                 SLOT_QUERY = '.root[] | select(.fields[].value == "%s") | .fields[] | select(.name | test(".*slot";"i"))'%(controller_name)
 
                 # get robot Proto
-                challenger.world_proto = pyjq.all(CONTROLLER_QUERY, proto.content)
+                challenger.world_proto = jq(CONTROLLER_QUERY, proto.content)
+                print(challenger.world_proto)
                 # get robot Name
-                challenger.robot = pyjq.first(ROBOT_NAME_QUERY, proto.content)
+                challenger.robot = jq(ROBOT_NAME_QUERY, proto.content)
+                print(challenger.robot)
                 # get robot Slots
-                challenger.slots = pyjq.all(SLOT_QUERY, proto.content)
+                challenger.slots = jq(SLOT_QUERY, proto.content, as_list=True)
+                print(challenger.slots)
 
-                print('-----------------')
+                
                 print("Challenger %s. Found slots : {%s}"%(challenger.controller, challenger.slots_to_proto()))
 
                 if challenger.robot and challenger.controller:
