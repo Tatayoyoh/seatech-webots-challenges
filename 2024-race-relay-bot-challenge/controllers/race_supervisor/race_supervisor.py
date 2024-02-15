@@ -33,7 +33,7 @@ if __name__ == '__main__':
                 challenger2 = supervisor.pop_challenger(1)
         elif challenger2:
             ch2_pos = challenger2.getPosition()
-            if ch2_pos[0] > -46 and ch2_pos[0] < -40 and ch2_pos[1] > 48 and ch2_pos[1] < 53:
+            if ch2_pos[0] > -47 and ch2_pos[0] < -40 and ch2_pos[1] > 47 and ch2_pos[1] < 54:
                 challenger2.remove()
                 challenger2 = None
                 challenger3 = supervisor.pop_challenger(2)

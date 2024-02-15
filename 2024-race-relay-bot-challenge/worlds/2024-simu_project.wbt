@@ -187,9 +187,15 @@ SolidBox {
   size 5 10 5
 }
 SolidBox {
-  translation -21.8989 46.2055 1
+  translation -22.34 45.9929 1
   rotation 0 0 -1 0.935933
   name "rounded box(6)"
+  size 2 8 2
+}
+SolidBox {
+  translation -33.0758 38.262 1
+  rotation 0 0 -1 0.674134
+  name "rounded box(2)"
   size 2 8 2
 }
 SolidBox {
@@ -205,15 +211,7 @@ SolidBox {
   size 2 10 2
 }
 SolidBox {
-  translation -36.8578 34.4436 1
-  name "rounded box(2)"
-}
-SolidBox {
-  translation -32.239 38.6817 1
-  name "rounded box(3)"
-}
-SolidBox {
-  translation -30.3282 38.7538 1
+  translation -42.4734 40.9094 1
   name "rounded box(13)"
 }
 SolidBox {
@@ -227,10 +225,6 @@ SolidBox {
 SolidBox {
   translation -29.7066 31.9385 1
   name "rounded box(11)"
-}
-SolidBox {
-  translation -33.7563 38.7037 1
-  name "rounded box(5)"
 }
 SolidBox {
   translation -20.0214 34.6029 1

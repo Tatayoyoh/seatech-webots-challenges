@@ -1,0 +1,18 @@
+#VRML_SIM R2023b utf8
+
+SummitXlSteel {
+  controller "monde1_Andy_team_RevenuPassifRacing"
+}
+
+Mavic2Pro {
+  controller "monde3_Bastien_team_Cocobot"
+}
+
+Pioneer3dx {
+  translation -16.9057 23.6562 0.0975
+  controller "monde2_Antoinde-Damien_team_Lequipe3"
+  extensionSlot [
+    Compass {
+    }
+  ]
+}
