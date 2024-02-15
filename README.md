@@ -14,4 +14,4 @@ Robot challenges for students
 
 [Here](2024-race-relay-bot-challenge/README.md) for mode details
 
-[Challengers simulation video](https://youtu.be/8CRBgYl4z3w)
+[Video](https://youtu.be/8CRBgYl4z3w)
