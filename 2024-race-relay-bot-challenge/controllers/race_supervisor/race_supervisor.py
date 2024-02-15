@@ -7,17 +7,14 @@ if __name__ == '__main__':
     supervisor = SeatechRaceSupervisor()
     keyboard = Keyboard(supervisor.timestep)
 
-    print('Available Teams :')
-    teams_letters = ['A','B','C','D'] # my Linux keybords not not accept numbers from Webots :(
-    
+    print('Select a Team :')
     for i, team in enumerate(supervisor.teams):
-        print(teams_letters[i], team)
+        print(i+1, team)
 
-    chose = input()
-    team_number = teams_letters.index(chose)
-    supervisor.select_team(team_number)
-    supervisor.fetch_challengers_robots()
-    print('>>> READY TO START WITH %s'%(supervisor.teams[team_number]))
+    index = input()
+    index = int(index) -1
+    supervisor.select_team(index)
+    print('>>> READY TO START WITH %s'%(supervisor.teams[index]))
 
     # First challenger
     challenger1 = supervisor.pop_challenger(0)

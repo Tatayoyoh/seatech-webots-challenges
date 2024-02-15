@@ -1,13 +1,10 @@
 from os.path import abspath, dirname, join, exists
 from os import listdir, walk
 from pprint import pprint
-import random
-import math
-from controller import Supervisor, Robot
+from controller import Supervisor
 from webots_parser import WebotsParser
 import pyjq
 import shutil
-import os
 import pathlib
 from pprint import pprint
 
@@ -18,11 +15,12 @@ class Team():
     def __init__(self, name, repo_path):
         self.name: str = name
         self.repo_path = repo_path
+        self.world_file = ''
         self.challengers: list[Challenger] = []
         self.unsuported_challengers: list[Challenger] = []
 
     def __repr__(self) -> str:
-        return self.name
+        return "%s"%(self.name)
 
     def __str__(self) -> str:
         return self.__repr__()
@@ -34,13 +32,30 @@ class Challenger():
         self.name = name
         self.src_path = src_path
         self.robot = ''
+        self.world_proto = {}
         self.controller = ''
         self.world = None
-        self.robot_settings = []
+        self.slots = []
         self.simu_DEF = None
 
+    def slots_to_proto(self):
+        parser = WebotsParser()
+        proto_slots = []
+
+        for slot in self.slots:
+            with open('/tmp/slots', 'w', newline='\n') as parser.file:
+                parser._write_field(slot)
+            with open('/tmp/slots', 'r') as parser.file:
+                proto_content = parser.file.read()
+                proto_slots.append(proto_content.replace('\n', ''))
+    
+        if proto_slots:
+            return ', '+ ','.join(proto_slots)
+        
+        return ''
+
     def __repr__(self) -> str:
-        return '%s (%s): %s %s [%s]' % (self.name, self.src_path, self.robot, self.controller, self.robot_settings)
+        return '%s (%s): %s %s [%s]' % (self.name, self.src_path, self.robot, self.controller, self.slots_to_proto())
 
     def __str__(self) -> str:
         return self.__repr__()
@@ -88,90 +103,85 @@ class SeatechRaceSupervisor(Supervisor):
     def running(self):
         return self.__running
 
-    def __get_used_robot(self, proto_content):
-        for r in ROBOT_LIST:
-            if r in proto_content:
-                return r
-        return None
-
     def __fetch_teams(self):
         for team_name in listdir(self.__teams_folder):
-            self.__teams.append(
-                Team(team_name, join(self.__teams_folder, team_name)))
+            team = Team(team_name, repo_path=join(self.__teams_folder, team_name))
+            for root, dirs, files in walk(team.repo_path):
+                if 'worlds' in dirs and 'controllers' in dirs:
+                    world_path = join(team.repo_path, 'worlds')
+                    worlds = list(pathlib.Path(world_path).glob('*.wbt'))
+                    if len(worlds) > 0:
+                        team.world_file = worlds[0]
+                    else:
+                        raise Exception('No world .wbt found for team %s at %s'%(team.name, world_path))
+            self.__teams.append(team) 
 
     def select_team(self, index):
-        self.__selected_team = self.teams[index]
+        if len(self.__teams) < index or index < 0:
+            print("Wrong provided team index : %s. Total teams : %d"%index, len(self.__teams))
+            return
+        
+        self.__selected_team = self.__teams[index]
+        team:Team = self.__selected_team
 
-    def fetch_challengers_robots(self):
-        self.__selected_team.challengers = []
-        self.__selected_team.unsuported_challengers = []
+        team.challengers = []
+        team.unsuported_challengers = []
 
-        # fetch folder
-        for root, dirs, files in walk(self.__selected_team.repo_path):
-            if 'worlds' in dirs and 'controllers' in dirs:
-                print(root, dirs)
-                challenger_world_file = join(
-                    root, 'worlds', '2024-simu_project.wbt')
-                    
-                controllers = list(listdir(join(root, 'controllers')))
-                controllers.sort()
-                for controller_name in controllers:
-                    print(controller_name)
-                    controller_path = join(
-                        root, 'controllers', controller_name)
+        # fetch Team challengers and controllers
+        controllers = list(listdir(join(team.repo_path, 'controllers')))
+        controllers.sort()
+        for controller_name in controllers:
+            print(controller_name)
+            controller_path = join(team.repo_path, 'controllers', controller_name)
 
-                    challenger = Challenger(
-                        name=controller_name,
-                        src_path=controller_path
-                    )
+            challenger = Challenger(
+                name=controller_name,
+                src_path=controller_path
+            )
 
-                    if exists(controller_path) and exists(challenger_world_file):
-                        # get robot controller name
-                        challenger.controller = self.__selected_team.name+'_'+controller_name
+            if exists(controller_path) and exists(team.world_file):
+                # get robot controller name
+                challenger.controller = team.name+'_'+controller_name
 
-                        # parse Webots PROTO file
-                        try:
-                            proto = WebotsParser()
-                            proto.load(challenger_world_file)
+                # parse Webots PROTO file
+                try:
+                    proto = WebotsParser()
+                    proto.load(team.world_file)
 
-                            controller_copy = join(self.__controllers_folder, challenger.controller)
-                            if exists(controller_copy):
-                                shutil.rmtree(controller_copy)
-                            shutil.copytree(controller_path, controller_copy)
-                            shutil.move(join(controller_copy,controller_name+'.py'), join(controller_copy,challenger.controller+'.py'))
-                        except Exception as e:
-                            print('ERROR', str(challenger))
-                            print(e)
-                            continue
+                    # copy controller into simulation "controllers" folder
+                    controller_copy = join(self.__controllers_folder, challenger.controller)
+                    if exists(controller_copy):
+                        shutil.rmtree(controller_copy)
+                    shutil.copytree(controller_path, controller_copy)
+                    shutil.move(join(controller_copy,controller_name+'.py'), join(controller_copy,challenger.controller+'.py'))
+                except Exception as e:
+                    print('ERROR', str(challenger))
+                    print(e)
+                    continue
 
-                        CONTROLLER_QUERY = '.root[] | select(.fields[].value == "%s")'%(controller_name)
-                        ROBOT_NAME_QUERY = '.root[] | select(.fields[].value == "%s") | .name'%(controller_name)
-                        SLOT_QUERY = '.root[].fields[] | select(.name | test(".*slot";"i"))'
-                        robot_controller_dict = pyjq.all(CONTROLLER_QUERY, proto.content)
+                CONTROLLER_QUERY = '.root[] | select(.fields[].value == "%s")'%(controller_name)
+                ROBOT_NAME_QUERY = '.root[] | select(.fields[].value == "%s") | .name'%(controller_name)
+                SLOT_QUERY = '.root[] | select(.fields[].value == "%s") | .fields[] | select(.name | test(".*slot";"i"))'%(controller_name)
 
-                        # get robot World
-                        challenger.world = challenger_world_file
-                        # get robot Name
-                        challenger.robot = pyjq.first(ROBOT_NAME_QUERY, proto.content)
-                        # get robot Slots
-                        robot_slots = pyjq.all(SLOT_QUERY, proto.content)
+                # get robot Proto
+                challenger.world_proto = pyjq.all(CONTROLLER_QUERY, proto.content)
+                # get robot Name
+                challenger.robot = pyjq.first(ROBOT_NAME_QUERY, proto.content)
+                # get robot Slots
+                challenger.slots = pyjq.all(SLOT_QUERY, proto.content)
 
-                        for slot in robot_slots:
-                            with open('/tmp/slots', 'w', newline='\n') as proto.file:
-                                proto._write_field(slot)
-                            with open('/tmp/slots', 'r') as proto.file:
-                                proto_content = proto.file.read()
-                                challenger.robot_settings.append(proto_content.replace('\n', ''))
+                print('-----------------')
+                print("Challenger %s. Found slots : {%s}"%(challenger.controller, challenger.slots_to_proto()))
 
-                        if challenger.robot and challenger.controller:
-                            self.__selected_team.challengers.append(challenger)
-                        else:
-                            self.__selected_team.unsuported_challengers.append(challenger)
+                if challenger.robot and challenger.controller:
+                    team.challengers.append(challenger)
+                else:
+                    team.unsuported_challengers.append(challenger)
             else:
-                break
-
-        print('IMPORTED', len(self.__selected_team.challengers))
-        print('IGNORED', self.__selected_team.unsuported_challengers)
+                raise Exception('Missing "worlds" or "controllers" path for team %s'%(team.name))
+        
+        print('IMPORTED', len(team.challengers))
+        print('IGNORED', team.unsuported_challengers)
 
     def clear(self):
         for challenger in self.__selected_team.challengers:
@@ -219,12 +229,6 @@ class SeatechRaceSupervisor(Supervisor):
 
         controller = ', controller "%s"' % (challenger.controller)
 
-        settings = ''
-        if challenger.robot_settings:
-            print(challenger.robot_settings)
-            for s in challenger.robot_settings:
-                settings += ',' + s
-
         node_name = challenger.name
 
         # With 'DEF' we can set Node definition
@@ -232,7 +236,7 @@ class SeatechRaceSupervisor(Supervisor):
             translation %s %s %s, \
             rotation 0 0 1 %s, \
             name "%s" %s %s }' \
-            % (node_name, challenger.robot, x, y, z, rotation, challenger.name, controller, settings)
+            % (node_name, challenger.robot, x, y, z, rotation, challenger.name, controller, challenger.slots_to_proto())
 
 
         self.getRoot().getField('children').importMFNodeFromString(-1, robot_def)

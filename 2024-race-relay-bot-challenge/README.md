@@ -12,3 +12,17 @@ Les terrains sont décomposés en trois types :
 * suivit d'une route
 * résolution d'orientation terreste
 * résolution d'orentation aérienne
+
+## Récupérer les projets
+
+Le script suivant récupère les dépôts présents dans le fichier `repo-list`
+```
+python3 fetch_teams_repositories.py
+```
+
+## Lancer la simulation
+
+```
+cd controllers/race_supervisor/
+python3 race_supervisor.py
+```

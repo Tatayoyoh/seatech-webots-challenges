@@ -1,0 +1,4 @@
+teams/*
+!teams/top3challengers
+controllers/*
+!controllers/race_supervisor
