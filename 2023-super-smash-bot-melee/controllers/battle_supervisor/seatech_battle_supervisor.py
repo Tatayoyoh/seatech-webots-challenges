@@ -33,14 +33,18 @@ ROBOT_LIST = [
 ARENA_SIDE_SIZE = 3
 
 # SLOT_QUERY = '.root[0].fields[] | select(.name == $robotname).value.fields[] | select(.name | test(".*slot";"i"))'
-SLOT_QUERY = '.root[].fields[] | select(.name | test(".*slot";"i"))'
+SLOT_QUERY = '[ .root[].fields[] | select(.name | test(".*slot";"i")) ]'
 
 def jq(jq_expression, data, as_list=False):
     """ call jq command """
     cmd = "echo '%s' | jq '%s'"%(json.dumps(data), jq_expression)
     res = os.popen(cmd).read()
     if res:
-        res = json.loads(res)
+        try:
+            res = json.loads(res)
+        except Exception as e:
+            print('JSON parsing error : %s'%(e))
+        
         if as_list and type(res) != list:
             res = [res]
     else:
@@ -57,7 +61,24 @@ class Challenger():
         self.controller = ''
         self.world = None
         self.robot_settings = []
+        self.slots = []
         self.simu_DEF = None
+
+    def slots_to_proto(self):
+        parser = WebotsParser()
+        proto_slots = []
+
+        for slot in self.slots:
+            with open('/tmp/slots', 'w', newline='\n') as parser.file:
+                parser._write_field(slot)
+            with open('/tmp/slots', 'r') as parser.file:
+                proto_content = parser.file.read()
+                proto_slots.append(proto_content.replace('\n', ''))
+    
+        if proto_slots:
+            return ', '+ ','.join(proto_slots)
+        
+        return ''
 
     def __repr__(self) -> str:
         return '%s (%s): %s %s [%s]'%(self.name, self.src_path, self.robot, self.controller, self.robot_settings)
@@ -132,12 +153,7 @@ class SeatechBattleSupervisor(Supervisor):
                         # get robot Name
                         challenger.robot = self.__get_used_robot(str(proto.content))
                         # get robot Slots
-                        robot_slots = jq(SLOT_QUERY, proto.content)
-
-                        for slot in robot_slots:
-                            proto.write_content = ''
-                            proto._write_field(slot)
-                            challenger.robot_settings.append(proto.write_content.replace('\n', ''))
+                        challenger.slots = jq(SLOT_QUERY, proto.content)
 
                         break
 
@@ -151,10 +167,10 @@ class SeatechBattleSupervisor(Supervisor):
             challenger.simu_DEF.remove()
             challenger.simu_DEF = None
 
-        self.__challengers = []
-        self.__unsuported_challengers = []   
+        self.__challengers:list[Challenger] = []
+        self.__unsuported_challengers:list[Challenger] = []   
 
-        self.__running = False
+        self.__running:bool = False
 
                 
     def pop_challengers(self):
@@ -166,11 +182,6 @@ class SeatechBattleSupervisor(Supervisor):
             # TODO : not twice same place
 
             controller = ', controller "%s"'%(challenger.controller)
-            
-            settings = ''
-            if challenger.robot_settings:
-                for s in challenger.robot_settings:
-                    settings += ',' + s
 
             node_name = challenger.name
 
@@ -179,7 +190,7 @@ class SeatechBattleSupervisor(Supervisor):
                 translation %s %s 2.1, \
                 rotation 0 0 1 %s, \
                 name "%s" %s %s }' \
-                %(node_name, challenger.robot, x, y, rotation, challenger.name, controller, settings)
+                %(node_name, challenger.robot, x, y, rotation, challenger.name, controller, challenger.slots_to_proto())
 
             self.getRoot().getField('children').importMFNodeFromString(-1, robot_def)
             self.challengers[i].simu_DEF = self.getFromDef(node_name)

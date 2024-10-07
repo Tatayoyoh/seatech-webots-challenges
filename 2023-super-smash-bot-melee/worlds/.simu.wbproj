@@ -1,25 +1,9 @@
-Webots Project File version R2023a
-perspectives: 000000ff00000000fd00000002000000010000021800000380fc0200000001fb0000001400540065007800740045006400690074006f0072000000001b000003800000008b00ffffff000000030000087000000039fc0100000002fb0000000e0043006f006e0073006f006c006501000000000000073f0000000000000000fb0000001a0043006f006e0073006f006c00650041006c006c0041006c006c0100000000000008700000006900ffffff00000870000004e900000001000000020000000100000008fc00000000
+Webots Project File version R2023b
+perspectives: 000000ff00000000fd00000002000000010000021800000380fc0200000001fb0000001400540065007800740045006400690074006f0072000000001b000003800000003f00ffffff000000030000087000000111fc0100000002fb0000000e0043006f006e0073006f006c006501000000000000073f0000000000000000fb0000001a0043006f006e0073006f006c00650041006c006c0041006c006c0100000000000008700000006900ffffff000008700000041100000001000000020000000100000008fc00000000
 simulationViewPerspectives: 000000ff00000001000000020000016c000004a00100000002010000000101
 sceneTreePerspectives: 000000ff00000001000000030000001c000000c0000000fa0100000002010000000201
 maximizedDockId: -1
 centralWidgetVisible: 1
 orthographicViewHeight: 1
-textFiles: 0 "../../../../../../../home/bob/Projects/seatech/seatech-webots-challenges/2023-super-smash-bot-melee/controllers/my_controller/my_controller.py"
+textFiles: 0 "controllers/my_controller/my_controller.py"
 consoles: Console:All:All
-renderingDevicePerspectives: Jacint012:camera depth;1;1;0;0
-renderingDevicePerspectives: Jacint012:camera rgb;1;1;0;0
-renderingDevicePerspectives: JustYo:high_def_sensor;1;1;0;0
-renderingDevicePerspectives: JustYo:l_forearm_cam_sensor;1;1;0;0
-renderingDevicePerspectives: JustYo:r_forearm_cam_sensor;1;1;0;0
-renderingDevicePerspectives: JustYo:range-finder;1;1;0;0
-renderingDevicePerspectives: JustYo:wide_stereo_l_stereo_camera_sensor;1;1;0;0
-renderingDevicePerspectives: JustYo:wide_stereo_r_stereo_camera_sensor;1;1;0;0
-renderingDevicePerspectives: LeGoazigoAntoine:camera depth;1;1;0;0
-renderingDevicePerspectives: LeGoazigoAntoine:camera rgb;1;1;0;0
-renderingDevicePerspectives: Lunearh:camera depth;1;1;0;0
-renderingDevicePerspectives: Lunearh:camera rgb;1;1;0;0
-renderingDevicePerspectives: amortea1:camera depth;1;1;0;0
-renderingDevicePerspectives: amortea1:camera rgb;1;1;0;0
-renderingDevicePerspectives: mlola378:depth_camera;1;1;0;0
-renderingDevicePerspectives: mlola378:rgb_camera;1;1;0;0

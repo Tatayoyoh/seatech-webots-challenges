@@ -18,21 +18,22 @@
 
 """IMPORTED FROM Github : https://github.com/cyberbotics/webots/blob/master/scripts/converter/webots_parser.py"""
 
+
 class WebotsParser:
     """This class reads a world file and parser its structure."""
     """It assumes the world file was saved with Webots and the indentation written by Webots was not changed."""
 
-    def __init__(self, verbose=True):
-        self.verbose = verbose
+    def __init__(self, verbose=False):
         self.content = {}
         self.line_count = 0
         self.indentation = 0
         self.file = None
-        self.write_content = ''
+        self.verbose = verbose
 
     def load(self, filename):
         with open(filename, 'r') as self.file:
             self.content['header'] = []
+            self.content['externprotos'] = []
             self.line_count = 0
 
             self.content['header'] = []
@@ -43,6 +44,9 @@ class WebotsParser:
                 if line.startswith('#') or not line.strip():
                     self.line_count += 1
                     self.content['header'].append(line.strip())
+                elif line.startswith('EXTERNPROTO') or line.startswith('IMPORTABLE EXTERNPROTO'):
+                    self.line_count += 1
+                    self.content['externprotos'].append(line.strip())
                 else:
                     self.file.seek(revert_position)
                     self.line_count = revert_line_count
@@ -53,80 +57,72 @@ class WebotsParser:
                 line = self._prepare_line(line)
                 self.line_count += 1
                 if line:
-                    if line.startswith('EXTERNPROTO') or line.startswith('IMPORTABLE EXTERNPROTO'):
-                        continue
-                    elif line.startswith('PROTO'):
+                    if line.startswith('PROTO'):
                         self.content['root'].append(self._read_node_declaration(line))
                     else:
                         self.content['root'].append(self._read_node(line))
 
-    def generate(self):
-        self.write_content = ''
-        for header_line in self.content['header']:
-            self._write(header_line + '\n')
-        for node in self.content['root']:
-            if node['type'] == 'node':
-                self._write_node(node)
-            else:
-                self._write_node_declaration(node)
-    
     def save(self, filename):
         self.indentation = 0
         with open(filename, 'w', newline='\n') as self.file:
-            self.generate()
-            self.file.write(self.write_content)
+            for header_line in self.content['header']:
+                self.file.write(header_line + '\n')
+            for externproto_line in self.content['externprotos']:
+                self.file.write(externproto_line + '\n')
+            for node in self.content['root']:
+                if node['type'] == 'node':
+                    self._write_node(node)
+                else:
+                    self._write_node_declaration(node)
 
     @staticmethod
     def str(value):
         return ('%.15f' % value).rstrip('0').rstrip('.')
 
-    def __print(self, text):
+    def __print(self, msg):
         if self.verbose:
-            print(text)
-
-    def _write(self, text):
-        self.write_content += text
-
+            print(msg)
 
     def _write_field_declaration(self, field):
-        self._write('  ' + field['raw'] + '\n')
+        self.file.write('  ' + field['raw'] + '\n')
         # TODO: Add more fields
 
     def _write_node_declaration(self, node):
         # Write PROTO header
-        self._write('PROTO ' + node['name'] + ' [\n')
+        self.file.write('PROTO ' + node['name'] + ' [\n')
         for field in node['fields']:
             self._write_field_declaration(field)
-        self._write(']\n')
-        self._write('{\n')
+        self.file.write(']\n')
+        self.file.write('{\n')
 
         # Write PROTO Robot
         for node in node['root']:
             self.indentation = 2
             self._write_node(node, 2)
 
-        self._write('}\n')
+        self.file.write('}\n')
 
     def _write_node(self, node, indentation=0):
         if node is None:
-            self._write('NULL\n')
+            self.file.write('NULL\n')
             return
         if 'DEF' in node:
             name = 'DEF ' + node['DEF'] + ' '
         elif 'USE' in node:
-            self._write('USE ' + node['USE'] + '\n')
+            self.file.write('USE ' + node['USE'] + '\n')
             return
         else:
             name = indentation * ' '
         name += node['name']
-        self._write(name + ' {\n')
+        self.file.write(name + ' {\n')
         self.indentation += 2
         for field in node['fields']:
             self._write_field(field)
         self.indentation -= 2
-        self._write(' ' * self.indentation + '}\n')
+        self.file.write(' ' * self.indentation + '}\n')
 
     def _write_field(self, field):
+        self.__print(field)
         line = ' ' * self.indentation
         line += field['name'] + ' '
         value = field['value']
@@ -153,45 +149,45 @@ class WebotsParser:
             line += 'IS '
             line += value
         elif type_field == 'SFNode':
-            self._write(line)
+            self.file.write(line)
             self._write_node(value)
             return
         else:  # MF*
             if len(value) == 0:
                 line += '[]'
             else:
-                self._write(line + '[\n')
+                self.file.write(line + '[\n')
                 self._write_mf_field(type_field, value)
                 line = ' ' * self.indentation + ']'
-        self._write(line + '\n')
+        self.file.write(line + '\n')
 
     def _write_mf_field(self, type_field, values):
         self.indentation += 2
         indent = ' ' * self.indentation
         count = 0
-        self._write(indent)
+        self.file.write(indent)
         for index, value in enumerate(values):
             if type_field == 'MFString':
-                self._write('"' + value + '"\n')
+                self.file.write('"' + value + '"\n')
             elif type_field == 'MFInt32' or type_field == 'MFFloat':
-                self._write(value + ' ')
+                self.file.write(value + ' ')
             elif type_field == 'MFBool':
-                self._write('TRUE\n' if value else 'FALSE\n')
+                self.file.write('TRUE\n' if value else 'FALSE\n')
             elif type_field == 'MFNode':
                 self._write_node(value, self.indentation if index > 0 else 0)
             elif type(value) is not list:
                 self.__print("Skip {} with values {}".format(type_field, values))
-                self._write(str(values).replace('[', '').replace("'", '').replace(']', ''))
+                self.file.write(str(values).replace('[', '').replace("'", '').replace(']', ''))
                 break
             elif type_field == 'MFVec2f':
-                self._write(value[0] + ' ' + value[1])
+                self.file.write(value[0] + ' ' + value[1])
             elif type_field == 'MFVec3f' or type_field == 'MFColor':
-                self._write(value[0] + ' ' + value[1] + ' ' + value[2])
+                self.file.write(value[0] + ' ' + value[1] + ' ' + value[2])
             elif type_field == 'MFRotation':
-                self._write(value[0] + ' ' + value[1] + ' ' + value[2] + ' ' + value[3])
+                self.file.write(value[0] + ' ' + value[1] + ' ' + value[2] + ' ' + value[3])
             count += 1
         if type_field in ['MFInt32', 'MFFloat', 'MFVec2f', 'MFVec3f', 'MFColor', 'MFRotation']:
-            self._write('\n')
+            self.file.write('\n')
         self.indentation -= 2
 
     def _read_node(self, line):
@@ -206,6 +202,10 @@ class WebotsParser:
             return node
         else:
             node['name'] = words[0]
+
+        lastWord = words[len(words) - 1]
+        if lastWord == '}' or lastWord == '{}':
+            return node
         for line in self.file:
             line = self._prepare_line(line)
             self.line_count += 1
@@ -258,7 +258,7 @@ class WebotsParser:
         return node
 
     def _prepare_line(self, line):
-        if '%<' in line or '>%' in line:
+        if '%<' in line or '>%' in line or '%{' in line or '}%' in line:
             raise Exception(
                 f'JavaScript fragment found at line {self.line_count}. This script cannot handle JavaScript fragments.')
         return line.split('#')[0].strip()

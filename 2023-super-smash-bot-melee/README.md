@@ -24,11 +24,19 @@ cd seatech-python-object-and-robotic-exo/02-webots
 * le dépôt Github doit contenir un UNIQUE projet webots (controllers, worlds, protos, ...)
 
 
-## Utilisation du superviseur
+## Lancer la simulation
 
-`fetch_challengers_repositories.py` 
+### 1 - Récupérer les dépots des challengers
+
+```bash
+python3 fetch_challengers_repositories.py
+```
 * clonera ou mettra à jour les dépôts des challengers dans le répertoire `challengers`
 * copiera les répertoires 'my_controller' trouvés dans la simulation du superviseur dans le répertoire `controllers`
 
-`seatech_battle_supervisor.py`
-* récupérera la liste des challengers 
+### 2 - Lancemer la simulation
+
+```bash
+cd controllers/battle_supervisor
+python3 battle_supervisor.py`
+```

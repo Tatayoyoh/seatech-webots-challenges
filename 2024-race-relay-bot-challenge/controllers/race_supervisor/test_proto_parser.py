@@ -1,5 +1,4 @@
 from webots_parser import WebotsParser
-import pyjq
 from pprint import pprint
 from os.path import abspath, dirname, join, exists
 from os import listdir, walk
